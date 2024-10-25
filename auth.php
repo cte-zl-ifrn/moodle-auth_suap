@@ -166,9 +166,12 @@ class auth_plugin_suap extends auth_oauth2\auth
         */
         global $DB, $SESSION, $CFG;
 
-        if ($CFG->debug) {
-            echo "<pre>";
+        if (!property_exists($userdata, 'identificacao')) {
+            echo "<p>Erro ao integrar com o SUAP.</p>";
+            echo "<pre style='display: None'>";
             var_dump($userdata);
+            echo "</pre>";
+            die();
         }
         $usuario = $DB->get_record("user", ["username" => $userdata->identificacao]);
         if (!$usuario) {
