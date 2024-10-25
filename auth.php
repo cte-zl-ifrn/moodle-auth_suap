@@ -96,6 +96,7 @@ class auth_plugin_suap extends auth_oauth2\auth
             throw new Exception("O código de autenticação não foi informado.");
         }
 
+        $user_data_response = "";
         try {
             $auth = json_decode(
                 \Httpful\Request::post(
@@ -111,13 +112,29 @@ class auth_plugin_suap extends auth_oauth2\auth
                 )->send()->raw_body
             );
 
-            $response = \Httpful\Request::get("$conf->base_url/api/v1/userinfo/?scope=" . urlencode('read'))
+            try {
+                // Tenta o SUAP Monolítico
+                $$user_data_response = \Httpful\Request::get("$conf->base_url/api/eu/?scope=" . urlencode('identificacao documentos_pessoais'))
                     ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
                     ->send()->raw_body;
-            $userdata = json_decode($response);
+                if (strpos($$user_data_response, '"identificacao"') === false) {
+                    throw new Exception("Erro ao tentar obter dados do SUAP Monolítico.");
+                }
+            } catch (Exception $e) {
+                // Tenta o SUAP Login
+                $$user_data_response = \Httpful\Request::get("$conf->base_url/api/v1/userinfo/?scope=" . urlencode('read'))
+                    ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
+                    ->send()->raw_body;
+                if (strpos($$user_data_response, '"identificacao"') === false) {
+                    throw new Exception("Erro ao tentar obter dados do SUAP Login.");
+                }
+            }
+
+            $userdata = json_decode($$user_data_response);
             $this->create_or_update_user($userdata);
         } catch (Exception $e) {
             echo "<p>Erro ao tentar integrar com o SUAP. Aguarde alguns minutos e <a href='{$CFG->wwwroot}/auth/suap/login.php'>tente novamente</a>.";
+            echo "<div style='display: None'>$user_data_response</div>.";
             die();
         }
         echo "<p>Erro ao tentar integrar com o SUAP. Não foi possível obter seus dados da API.</a>.";
@@ -147,8 +164,12 @@ class auth_plugin_suap extends auth_oauth2\auth
 
             // Antes a foto era relativa ao baseurl do SUAP, agora é absoluta e temporária
         */
-        global $DB, $USER, $SESSION, $CFG;
-        
+        global $DB, $SESSION, $CFG;
+
+        if ($CFG->debug) {
+            echo "<pre>";
+            var_dump($userdata);
+        }
         $usuario = $DB->get_record("user", ["username" => $userdata->identificacao]);
         if (!$usuario) {
             $usuario = (object)[
