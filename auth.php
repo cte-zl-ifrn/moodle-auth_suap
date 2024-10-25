@@ -86,7 +86,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         global $CFG, $USER;
 
         if ($USER->id) {
-            header("Location: $next", true, 302);
+            header("Location: /", true, 302);
             die();
         }
 
