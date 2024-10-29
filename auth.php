@@ -218,7 +218,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         $next = $SESSION->next_after_next;
 
         $this->update_user_record($this->usuario->username);
-        if (property_exists($userdata, 'foto')) {
+        if (property_exists($userdata, 'foto') && $userdata->foto) {
             $this->update_picture($usuario, $userdata->foto);
         }
         $usuario = $DB->get_record("user", ["username" => $userdata->identificacao]);
