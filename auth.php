@@ -174,6 +174,18 @@ class auth_plugin_suap extends auth_oauth2\auth
             die();
         }
         $usuario = $DB->get_record("user", ["username" => $userdata->identificacao]);
+
+        if ($userdata->nome_social) {
+            if (count(explode(' ', $userdata->nome_social)) == 1) {
+                $parts = explode(' ', $userdata->nome_registro);
+                $userdata->primeiro_nome = $userdata->nome_social . ' ' . implode(' ', array_slice($parts, 1, -1));
+                $userdata->ultimo_nome = array_slice($parts, -1)[0];
+            } else {
+                $userdata->primeiro_nome = implode(' ', array_slice(explode(' ', $userdata->nome_social), 0, -1));
+                $userdata->ultimo_nome = array_slice(explode(' ', $userdata->nome_social), -1)[0];
+            }
+        }
+
         if (!$usuario) {
             $usuario = (object)[
                 'username' => $userdata->identificacao,
