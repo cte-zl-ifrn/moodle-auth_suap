@@ -185,6 +185,11 @@ class auth_plugin_suap extends auth_oauth2\auth
                 $userdata->ultimo_nome = array_slice(explode(' ', $userdata->nome_social), -1)[0];
             }
         }
+        if (empty($userdata->nome_social)){
+            $parts = explode(' ', $userdata->nome_registro);
+            $userdata->primeiro_nome = implode(' ', array_slice($parts, 0, -1));
+            $userdata->ultimo_nome = end($parts);
+        }
 
         if (!$usuario) {
             $usuario = (object)[
