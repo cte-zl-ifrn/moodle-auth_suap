@@ -2,7 +2,7 @@
 require_once('../../config.php');
 $config = get_config('auth_suap');
 \core\session\manager::init_empty_session();
-$logout_url = "{$config->base_url}/logout/";
+$logout_url = "{$config->base_url}/comum/logout/";
 ?>
 <html>
 
