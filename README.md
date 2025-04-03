@@ -27,6 +27,8 @@ Clique em **Salvar mudanças**
     - Habilite OAUTH 2 e SUAP (caso já não estejam ativados)
 2. Definir URL Alternativa para login:
     - Role até URL alternativa para login (alternateloginurl) e preencha com: `http://moodle/auth/suap/login.php`
+    
+⚠️ **Atenção**: Ao definir a URL alternativa, **todas**  as tentativas de login serão redirecionadas para essa página. Certifique-se de que **há pelo menos um usuário com autenticação OAuth 2 e permissões de administrador** antes de prosseguir, para evitar ficar "preso do lado de fora" do Moodle.
 
 Role até o final e clique em **Salvar mudanças**
 
