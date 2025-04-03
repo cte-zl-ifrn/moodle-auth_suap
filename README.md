@@ -20,7 +20,7 @@ auth_suap
 
 Clique em **Salvar mudanças**
 
-## 2. Configuração no Moodle
+### 2. Configuração no Moodle
 1. Ativar plugins de Autenticação:
     - Acesse **Administração do site > Plugins > Autenticação > Gerenciar autenticação**
     - Habilite OAUTH 2 e SUAP (caso já não estejam ativados)
@@ -28,7 +28,7 @@ Clique em **Salvar mudanças**
     - Role até URL alternativa para login (alternateloginurl) e preencha com: `http://moodle/auth/suap/login.php`
 
 Role até o final e clique em **Salvar mudanças**
-## 3. Configuração do SUAP no Moodle
+### 3. Configuração do SUAP no Moodle
 1. Acesse **Administração do site > Plugins > Autenticação > SUAP**.
 2. Preencha os campos:
     - **URL base:** `https://suap.ifrn.edu.br`
