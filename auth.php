@@ -173,7 +173,7 @@ class auth_plugin_suap extends auth_oauth2\auth
             echo "</pre>";
             die();
         }
-        $usuario = $DB->get_record("user", ["username" => $userdata->identificacao]);
+        $usuario = $DB->get_record("user", ["username" => strtolower($userdata->identificacao)]);
 
         if ($userdata->nome_social) {
             if (count(explode(' ', $userdata->nome_social)) == 1) {
@@ -185,7 +185,7 @@ class auth_plugin_suap extends auth_oauth2\auth
                 $userdata->ultimo_nome = array_slice(explode(' ', $userdata->nome_social), -1)[0];
             }
         }
-        if (empty($userdata->nome_social)){
+        if (empty($userdata->nome_social)) {
             $parts = explode(' ', $userdata->nome_registro);
             $userdata->primeiro_nome = implode(' ', array_slice($parts, 0, -1));
             $userdata->ultimo_nome = end($parts);
@@ -193,7 +193,7 @@ class auth_plugin_suap extends auth_oauth2\auth
 
         if (!$usuario) {
             $usuario = (object)[
-                'username' => $userdata->identificacao,
+                'username' => strtolower($userdata->identificacao),
                 'firstname' => $userdata->primeiro_nome,
                 'lastname' => $userdata->ultimo_nome,
                 'email' => $userdata->email_preferencial,
@@ -238,7 +238,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         if (property_exists($userdata, 'foto') && $userdata->foto) {
             $this->update_picture($usuario, $userdata->foto);
         }
-        $usuario = $DB->get_record("user", ["username" => $userdata->identificacao]);
+        $usuario = $DB->get_record("user", ["username" => strtolower($userdata->identificacao)]);
         complete_user_login($usuario);
 
         header("Location: $next", true, 302);
