@@ -353,6 +353,7 @@ class auth_plugin_suap extends auth_oauth2\auth
 <?php
             die();
         }
+        require_once("$CFG->dirroot/auth/suap/suap_error.php");
         echo "<p>Erro ao tentar integrar com o SUAP. Não foi possível obter seus dados da API.</a>.";
         die();
     }
