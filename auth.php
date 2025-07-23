@@ -114,30 +114,30 @@ class auth_plugin_suap extends auth_oauth2\auth
 
             try {
                 // Tenta o SUAP Monolítico
-                $$user_data_response = \Httpful\Request::get("$conf->base_url/api/eu/?scope=" . urlencode('identificacao documentos_pessoais'))
+                $user_data_response = \Httpful\Request::get("$conf->base_url/api/eu/?scope=" . urlencode('identificacao documentos_pessoais'))
                     ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
                     ->send()->raw_body;
-                if (strpos($$user_data_response, '"identificacao"') === false) {
+                if (strpos($user_data_response, '"identificacao"') === false) {
                     throw new Exception("Erro ao tentar obter dados do SUAP Monolítico.");
                 }
             } catch (Exception $e) {
                 // Tenta o SUAP Login
-                $$user_data_response = \Httpful\Request::get("$conf->base_url/api/v1/userinfo/?scope=" . urlencode('read'))
+                $user_data_response = \Httpful\Request::get("$conf->base_url/api/v1/userinfo/?scope=" . urlencode('read'))
                     ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
                     ->send()->raw_body;
-                if (strpos($$user_data_response, '"identificacao"') === false) {
+                if (strpos($user_data_response, '"identificacao"') === false) {
                     throw new Exception("Erro ao tentar obter dados do SUAP Login.");
                 }
             }
 
-            $userdata = json_decode($$user_data_response);
+            $userdata = json_decode($user_data_response);
             $this->create_or_update_user($userdata);
         } catch (Exception $e) {
             include("$CFG->dirroot/auth/suap/suap_error.php");
             die();
         }
-        include("$CFG->dirroot/auth/suap/suap_error.php");
-        die();
+        // include("$CFG->dirroot/auth/suap/suap_error.php");
+        // die();
     }
 
     function create_or_update_user($userdata)
@@ -214,6 +214,14 @@ class auth_plugin_suap extends auth_oauth2\auth
                 'alternatename' => null,
             ];
             $usuario->id = \user_create_user($usuario);
+
+            $default_user_preferences = get_config('local_suap', 'default_user_preferences');
+            foreach (preg_split('/\r\n|\r|\n/', $default_user_preferences) as $preference) {
+                $parts = explode("=", $preference);
+                if (count($parts) == 2) {
+                    \set_user_preference($parts[0], $parts[1], $usuario);
+                }
+            }
         }
 
         $usuario->firstname = $userdata->primeiro_nome;
@@ -238,6 +246,7 @@ class auth_plugin_suap extends auth_oauth2\auth
             $this->update_picture($usuario, $userdata->foto);
         }
         $usuario = $DB->get_record("user", ["username" => strtolower($userdata->identificacao)]);
+
         complete_user_login($usuario);
 
         header("Location: $next", true, 302);
