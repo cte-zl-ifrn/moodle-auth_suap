@@ -93,7 +93,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         $conf = get_config('auth_suap');
 
         if (!isset($_GET['code'])) {
-            throw new Exception("O código de autenticação não foi informado.");
+            throw new Exception("O SUAP não informou o código de autenticação.");
         }
 
         $user_data_response = "";
