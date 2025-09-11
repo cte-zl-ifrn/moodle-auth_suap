@@ -158,7 +158,11 @@ class auth_plugin_suap extends auth_oauth2\auth
                 "campus": "RE",
                 "foto":"https://cdn.suap.ifrn.edu.br/media/fotos/75x100/159574.4t54kAqLqyPB.jpg?X-Amz-Algorithm=...&X-Amz-Credential=...&X-Amz-Date=...&X-Amz-Expires=...&X-Amz-SignedHeaders=...&X-Amz-Signature=...",
                 "tipo_usuario": "Servidor (Técnico-Administrativo)",
-                "email_preferencial": "nome.sobrenome@ifrn.edu.br"
+                "email_preferencial": "nome.sobrenome@ifrn.edu.br",
+                "cpf":"645.834.571-20",
+                "data_de_nascimento":"1978-10-30",
+                "sexo":"M",
+                "passaporte":"FU507718"
             }
 
             // Antes a foto era relativa ao baseurl do SUAP, agora é absoluta e temporária
