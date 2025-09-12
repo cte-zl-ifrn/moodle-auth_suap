@@ -13,17 +13,17 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(__DIR__.'/locallib.php');
 
 if ($ADMIN->fulltree) {
-    require_once(__DIR__.'/../locallib.php');
 
     // Introductory explanation.
     $settings->add(new admin_setting_heading('auth_suap/pluginname', '', get_string('auth_suap_description', 'auth_suap')));
 
-    auth_suap_create_setting_configtext($settings, "base_url", "https://suap.ifrn.edu.br");
-    auth_suap_create_setting_configtext($settings, "client_id", "veja no SUAP");
-    auth_suap_create_setting_configtext($settings, "client_secret", "veja no SUAP");
-    auth_suap_create_setting_configtext($settings, "verify_token_url", "adicionar url de verificação do token");
+    create_setting_configtext($settings, "base_url", "https://suap.ifrn.edu.br");
+    create_setting_configtext($settings, "client_id", "veja no SUAP");
+    create_setting_configtext($settings, "client_secret", "veja no SUAP");
+    create_setting_configtext($settings, "verify_token_url", "https://suap.ifrn.edu.br/api/eu/");
 
     $authplugin = get_auth_plugin('suap');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields, get_string('auth_fieldlocks_help', 'auth'), true, true, $authplugin->get_custom_user_profile_fields());

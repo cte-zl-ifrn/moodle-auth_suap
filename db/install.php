@@ -27,4 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__.'/upgradelib.php');
 
 function xmldb_auth_suap_install() {
+    auth_suap_bulk_user_custom_field();
 }

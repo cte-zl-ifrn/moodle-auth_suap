@@ -242,6 +242,17 @@ class auth_plugin_suap extends auth_oauth2\auth
         $usuario->profile_field_campus_sigla = property_exists($userdata, 'campus') ? $userdata->campus : null;
         $usuario->profile_field_last_login = \json_encode($userdata);
         $usuario->profile_field_tipo_usuario = property_exists($userdata, 'tipo_usuario') ? $userdata->tipo_usuario : null;
+
+        $usuario->profile_field_data_de_nascimento = property_exists($userdata, 'data_de_nascimento') ? $userdata->data_de_nascimento : null;
+        $usuario->profile_field_sexo = property_exists($userdata, 'sexo') ? $userdata->sexo : null;
+        $usuario->profile_field_cpf = property_exists($userdata, 'cpf') ? $userdata->cpf : null;
+        $usuario->profile_field_passaporte = property_exists($userdata, 'passaporte') ? $userdata->passaporte : null;
+
+        if ($usuario->profile_field_cpf || $usuario->profile_field_passaporte) {
+            $usuario->profile_field_id_doc_certificado = $usuario->profile_field_cpf ? $usuario->profile_field_cpf : $usuario->profile_field_passaporte;
+            $usuario->profile_field_tipo_doc_certificado = $usuario->profile_field_cpf ? "CPF" : "Passaporte";
+        }
+
         $this->usuario = $usuario;
         $next = $SESSION->next_after_next;
 
