@@ -77,7 +77,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         } else {
             $SESSION->next_after_next = $next;
             $redirect_uri = "$CFG->wwwroot/auth/suap/authenticate.php";
-            header("Location: {$this->config->base_url}/o/authorize/?response_type=code&client_id={$this->config->client_id}&redirect_uri=$redirect_uri", true, 302);
+            header("Location: {$this->config->authorize_url}?response_type=code&client_id={$this->config->client_id}&redirect_uri=$redirect_uri", true, 302);
         }
     }
 
@@ -100,7 +100,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         try {
             $auth = json_decode(
                 \Httpful\Request::post(
-                    "$conf->base_url/o/token/",
+                    $conf->token_url,
                     [
                         'grant_type' => 'authorization_code',
                         'code' => $_GET['code'],
@@ -112,22 +112,12 @@ class auth_plugin_suap extends auth_oauth2\auth
                 )->send()->raw_body
             );
 
-            try {
-                // Tenta o SUAP Monolítico
-                $user_data_response = \Httpful\Request::get("$conf->base_url/api/eu/?scope=" . urlencode('identificacao documentos_pessoais'))
-                    ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
-                    ->send()->raw_body;
-                if (strpos($user_data_response, '"identificacao"') === false) {
-                    throw new Exception("Erro ao tentar obter dados do SUAP Monolítico.");
-                }
-            } catch (Exception $e) {
-                // Tenta o SUAP Login
-                $user_data_response = \Httpful\Request::get("$conf->base_url/api/v1/userinfo/?scope=" . urlencode('read'))
-                    ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
-                    ->send()->raw_body;
-                if (strpos($user_data_response, '"identificacao"') === false) {
-                    throw new Exception("Erro ao tentar obter dados do SUAP Login.");
-                }
+            // Tenta o SUAP Monolítico
+            $user_data_response = \Httpful\Request::get("$conf->rh_eu_url?scope=" . urlencode('identificacao documentos_pessoais'))
+                ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
+                ->send()->raw_body;
+            if (strpos($user_data_response, '"identificacao"') === false) {
+                throw new Exception("Erro ao tentar obter dados do SUAP.");
             }
 
             $userdata = json_decode($user_data_response);
@@ -136,8 +126,6 @@ class auth_plugin_suap extends auth_oauth2\auth
             include("$CFG->dirroot/auth/suap/suap_error.php");
             die();
         }
-        // include("$CFG->dirroot/auth/suap/suap_error.php");
-        // die();
     }
 
     function create_or_update_user($userdata)

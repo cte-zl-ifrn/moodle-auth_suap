@@ -29,14 +29,20 @@ $string['pluginname'] = 'SUAP';
 $string['auth_suap_description'] = 'SUAP';
 $string['auth_description'] = '1';
 
-$string['base_url'] = 'Base URL';
-$string['base_url_desc'] = 'Type your SUAP URL';
-
 $string['client_id'] = 'Client ID';
 $string['client_id_desc'] = "Remember to first register this Moodle in your list of applications in SUAP (Tec. of Information / Services / Applications OAUTH2). Sign as 'Authorization code', 'Public' and as 'Redirect uris' put '{$CFG->wwwroot}/admin/oauth2callback.php'.";
 
 $string['client_secret'] = 'Client secret';
 $string['client_secret_desc'] = "Remember, if you do not immediately save 'Client Secret' when editing it will no longer be available, i.e. you will need to register new service.";
 
-$string['verify_token_url'] = "Verify token URL";
-$string['verify_token_url_desc'] = "Verify token URL";
+$string['authorize_url'] = "Authorization URL in SUAP";
+$string['authorize_url_desc'] = "Authorization URL in SUAP";
+
+$string['token_url'] = "Authentication token validation URL in SUAP";
+$string['token_url_desc'] = "Authentication token validation URL in SUAP";
+
+$string['rh_eu_url'] = "URL for the rh/eu API on SUAP";
+$string['rh_eu_url_desc'] = "URL for the rh/eu API on SUAP";
+
+$string['logout_url'] = "Logout URL in SUAP";
+$string['logout_url_desc'] = "Logout URL in SUAP";

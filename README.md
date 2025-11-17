@@ -35,7 +35,6 @@ Role até o final e clique em **Salvar mudanças**
 ### 3. Configuração do SUAP no Moodle
 1. Acesse **Administração do site > Plugins > Autenticação > SUAP**.
 2. Preencha os campos:
-    - **URL base:** `https://suap.ifrn.edu.br`
     - **ID do Cliente:** Client ID gerado no SUAP
     - **Secredo do Cliente:** Client Secret gerado no SUAP
     - **Verify Token URL:** `http://painel/api/v1/verify/`
