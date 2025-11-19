@@ -20,7 +20,7 @@ if ($ADMIN->fulltree) {
     // Introductory explanation.
     $settings->add(new admin_setting_heading('auth_suap/pluginname', '', get_string('auth_suap_description', 'auth_suap')));
 
-    $suap_base_url = env('SUAP_BASE_URL', 'https://suap.ifrn.edu.br');
+    $suap_base_url = getenv('SUAP_BASE_URL') ?: 'https://suap.ifrn.edu.br';
 
     create_setting_configtext($settings, "client_id", "veja no SUAP");
     create_setting_configtext($settings, "client_secret", "veja no SUAP");
