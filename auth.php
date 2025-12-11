@@ -216,12 +216,13 @@ class auth_plugin_suap extends auth_oauth2\auth
             }
         }
 
+        $parts = explode(' ', $userdata->primeiro_nome);
         $usuario->firstname = $userdata->primeiro_nome;
-        $usuario->lastname = $userdata->ultimo_nome;
+        $usuario->lastname = $userdata->ultimo_nome ?: end($parts);
         $usuario->email = $userdata->email_preferencial;
         $usuario->auth = 'suap';
         $usuario->suspended = 0;
-        $usuario->profile_field_nome_apresentacao = $userdata->nome_usuaal;
+        $usuario->profile_field_nome_apresentacao = $userdata->nome_usual;
         $usuario->profile_field_nome_completo = property_exists($userdata, 'nome_registro') ? $userdata->nome_registro : null;
         $usuario->profile_field_nome_social = property_exists($userdata, 'nome_social') ? $userdata->nome_social : null;
         $usuario->profile_field_email_secundario = property_exists($userdata, 'email_secundario') ? $userdata->email_secundario : null;
