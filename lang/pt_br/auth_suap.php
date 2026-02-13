@@ -25,24 +25,24 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'SUAP';
-$string['auth_suap_description'] = 'SUAP';
-$string['auth_description'] = '1';
+$string['pluginname'] = 'Autenticação OAuth2 SUAP';
+$string['auth_suap_description'] = 'SUAP é o Sistema Unificado de Administração Pública utilizado em instituições federais brasileiras, incluindo o Instituto Federal do Rio Grande do Norte (IFRN). Este plugin possibilita integração de Single Sign-On (SSO), permitindo que alunos e servidores façam login no Moodle usando suas credenciais do SUAP. Sincroniza automaticamente dados do usuário (nome, email, CPF, status de matrícula) e suporta controle de acesso baseado em papéis conforme dados institucionais.';
+$string['auth_description'] = 'Autenticação OAuth2';
 
-$string['client_id'] = 'ID do cliente no SUAP ';
-$string['client_id_desc'] = "Lembre-se de primeiro cadastrar este Moodle na sua lista de aplicações no SUAP (Tec. da Informação / Serviços / Aplicações OAUTH2). Cadastre como 'Authorization code', 'Public' e como 'Redirect uris' coloque '{$CFG->wwwroot}/admin/oauth2callback.php'.";
+$string['client_id'] = 'ID do Cliente OAuth2';
+$string['client_id_desc'] = "Obtenha no SUAP: Gestão de Tecnologia > Serviços > Aplicações OAuth2. Registre sua instância do Moodle com tipo de autorização 'Código de autorização' (cliente público) e defina o URI de redirecionamento para: {$CFG->wwwroot}/auth/suap/authenticate.php";
 
-$string['client_secret'] = 'Segredo do cliente no SUAP ';
-$string['client_secret_desc'] = "Lembre-se, se você não salvar logo 'Secredo do cliente' ao editar ele não estará mais disponível, ou seja, será necessário cadastrar novo serviço.";
+$string['client_secret'] = 'Segredo do Cliente OAuth2';
+$string['client_secret_desc'] = "Este segredo é exibido apenas uma vez quando você cria a aplicação OAuth2 no SUAP. Salve imediatamente pois não pode ser recuperado depois. Para gerar um novo segredo, registre uma nova aplicação no SUAP.";
 
-$string['authorize_url'] = "URL de autorização no SUAP";
-$string['authorize_url_desc'] = "URL de autorização no SUAP";
+$string['authorize_url'] = "Ponto de Acesso de Autorização OAuth2 do SUAP";
+$string['authorize_url_desc'] = "URL do ponto de acesso de autorização OAuth2 do SUAP (tipicamente https://suap.ifrn.edu.br/o/authorize/)";
 
-$string['token_url'] = "URL de validação do token de autenticação no SUAP";
-$string['token_url_desc'] = "URL de validação do token de autenticação no SUAP";
+$string['token_url'] = "Ponto de Acesso de Token OAuth2 do SUAP";
+$string['token_url_desc'] = "URL do ponto de acesso de troca de token OAuth2 do SUAP (tipicamente https://suap.ifrn.edu.br/o/token/)";
 
-$string['rh_eu_url'] = "URL da API rh/eu no SUAP";
-$string['rh_eu_url_desc'] = "URL da API rh/eu no SUAP";
+$string['rh_eu_url'] = "Ponto de Acesso da API RH/EU do SUAP";
+$string['rh_eu_url_desc'] = "Ponto de acesso da API do SUAP para recuperar dados de identificação e documentos pessoais do usuário (tipicamente https://suap.ifrn.edu.br/api/eu/)";
 
-$string['logout_url'] = "URL de logout no SUAP";
-$string['logout_url_desc'] = "URL de logout no SUAP";
+$string['logout_url'] = "URL de Logout do SUAP";
+$string['logout_url_desc'] = "Ponto de acesso de logout do SUAP para encerrar a sessão (tipicamente https://suap.ifrn.edu.br/o/logout/)";
