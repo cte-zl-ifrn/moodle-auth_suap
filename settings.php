@@ -6,7 +6,7 @@
  * Currently support Google Analytics and Piwik
  *
  * @package     auth_suap
- * @category    upgrade
+ * @category    auth
  * @copyright   2020 Kelson Medeiros <kelsoncm@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
