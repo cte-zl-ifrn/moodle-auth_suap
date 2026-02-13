@@ -48,7 +48,8 @@ function validate_enabled_web_services() {
     }
 
     // Não pode se o serviço não existir e não estiver habilitado
-    $service = $DB->get_record('external_services', array('shortname' => $_GET['service'], 'enabled' => 1));
+    $servicename = required_param('service', PARAM_ALPHANUMEXT);
+    $service = $DB->get_record('external_services', array('shortname' => $servicename, 'enabled' => 1));
     if (empty($service)) {
         throw new moodle_exception('servicenotavailable', 'webservice');
     }

@@ -78,12 +78,13 @@ class auth_plugin_suap extends auth_oauth2\auth
     {
         global $CFG, $USER, $SESSION;
 
-        if (isset($_GET['next'])) {
-            $next = $_GET['next'];
-        } elseif (property_exists($SESSION, 'wantsurl')) {
-            $next = $SESSION->wantsurl;
-        } else {
-            $next = $CFG->wwwroot;
+        $next = optional_param('next', '', PARAM_LOCALURL);
+        if (empty($next)) {
+            if (property_exists($SESSION, 'wantsurl')) {
+                $next = $SESSION->wantsurl;
+            } else {
+                $next = $CFG->wwwroot;
+            }
         }
 
         if ($USER->id) {
@@ -106,9 +107,7 @@ class auth_plugin_suap extends auth_oauth2\auth
 
         $conf = get_config('auth/suap');
 
-        if (!isset($_GET['code'])) {
-            throw new Exception("O SUAP não informou o código de autenticação.");
-        }
+        $code = required_param('code', PARAM_ALPHANUMEXT);
 
         $user_data_response = "";
         try {
@@ -117,7 +116,7 @@ class auth_plugin_suap extends auth_oauth2\auth
                     $conf->token_url,
                     [
                         'grant_type' => 'authorization_code',
-                        'code' => $_GET['code'],
+                        'code' => $code,
                         'redirect_uri' => "{$CFG->wwwroot}/auth/suap/authenticate.php",
                         'client_id' => $conf->client_id,
                         'client_secret' => $conf->client_secret
@@ -213,7 +212,7 @@ class auth_plugin_suap extends auth_oauth2\auth
                 'deleted' => 0,
                 'firstaccess' => time(),
                 'currentlogin' => time(),
-                'lastip' => $_SERVER['REMOTE_ADDR'],
+                'lastip' => getremoteaddr(),
                 'firstnamephonetic' => null,
                 'lastnamephonetic' => null,
                 'middlename' => null,
