@@ -46,3 +46,12 @@ $string['rh_eu_url_desc'] = "SUAP API endpoint for retrieving user identificatio
 
 $string['logout_url'] = 'SUAP Logout URL';
 $string['logout_url_desc'] = "SUAP logout endpoint for session termination (typically https://suap.ifrn.edu.br/o/logout/)";
+
+// Privacy API strings.
+$string['privacy:metadata:suap:username'] = 'Username (institutional ID)';
+$string['privacy:metadata:suap:email'] = 'Email address';
+$string['privacy:metadata:suap:firstname'] = 'User first name';
+$string['privacy:metadata:suap:lastname'] = 'User last name';
+$string['privacy:metadata:suap:cpf'] = 'User CPF (Brazilian tax ID)';
+$string['privacy:metadata:suap:tipo'] = 'User type/role (student, staff, teacher, etc)';
+$string['privacy:metadata:suap:explanation'] = 'This plugin communicates with the external SUAP service for user authentication and data synchronization. User information including username, email, name, CPF, and role information is sent to SUAP during login and regular synchronization processes.';
