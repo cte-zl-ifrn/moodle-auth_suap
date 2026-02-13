@@ -31,7 +31,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         $this->authtype = 'suap';
         $this->roleauth = 'auth_suap';
         $this->errorlogtag = '[AUTH SUAP] ';
-        $this->config = get_config('auth_suap');
+        $this->config = get_config('auth/suap');
         $this->usuario = null;
     }
 
@@ -90,7 +90,7 @@ class auth_plugin_suap extends auth_oauth2\auth
             die();
         }
 
-        $conf = get_config('auth_suap');
+        $conf = get_config('auth/suap');
 
         if (!isset($_GET['code'])) {
             throw new Exception("O SUAP não informou o código de autenticação.");
@@ -207,7 +207,7 @@ class auth_plugin_suap extends auth_oauth2\auth
             ];
             $usuario->id = \user_create_user($usuario);
 
-            $default_user_preferences = get_config('local_suap', 'default_user_preferences');
+            $default_user_preferences = get_config('local/suap', 'default_user_preferences');
             foreach (preg_split('/\r\n|\r|\n/', $default_user_preferences) as $preference) {
                 $parts = explode("=", $preference);
                 if (count($parts) == 2) {
@@ -261,7 +261,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         global $CFG, $DB;
         require_once($CFG->libdir . '/gdlib.php');
 
-        $conf = get_config('auth_suap');
+        $conf = get_config('auth/suap');
 
         $tmp_filename = $CFG->tempdir . '/suapfoto' . $usuario->id;
         file_put_contents($tmp_filename, file_get_contents($foto));

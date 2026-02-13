@@ -1,6 +1,6 @@
 <?php
 require_once('../../config.php');
-$config = get_config('auth_suap');
+$config = get_config('auth/suap');
 \core\session\manager::init_empty_session();
 ?>
 <html>

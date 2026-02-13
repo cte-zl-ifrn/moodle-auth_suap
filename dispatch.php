@@ -44,7 +44,7 @@ function validate_enabled_web_services() {
 }
 
 function authenticate_service_caller() {
-    $config = get_config('auth_suap');
+    $config = get_config('auth/suap');
     $headers = getallheaders();
 
     // Verifica se o token de autenticação está no header
