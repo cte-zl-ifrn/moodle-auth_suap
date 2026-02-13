@@ -23,7 +23,9 @@
  */
 
 require_once('../../config.php');
-$config = get_config('auth/suap');
+require_once("$CFG->dirroot/auth/suap/locallib.php");
+
+$config = get_auth_suap_config();
 \core\session\manager::init_empty_session();
 ?>
 <html>
@@ -39,7 +41,7 @@ $config = get_config('auth/suap');
         <span style='text-align: center; font-size: 90%; padding: 0 2rem; font-style: italic; display: block;'>Assim
             você sairá do SUAP e será reencaminhado para a página de acesso ao SUAP.</span>
     </p>
-    <p style='text-align: center;'><a href="<?php echo $config->logout ?>" class='btn btn-primary'>Confirmar saída</a></p>
+    <p style='text-align: center;'><a href="<?php echo $config->logout_url ?>" class='btn btn-primary'>Confirmar saída</a></p>
     <p style='text-align: center; margin-top: 2rem;'>Ou você pode <a href="<?php echo $CFG->wwwroot; ?>">continuar
             conectado</a>.
     </p>

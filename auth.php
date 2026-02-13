@@ -28,8 +28,7 @@ require_once("$CFG->dirroot/user/lib.php");
 require_once("$CFG->dirroot/user/profile/lib.php");
 require_once("$CFG->dirroot/lib/authlib.php");
 require_once("$CFG->dirroot/lib/classes/user.php");
-require_once("$CFG->dirroot/auth/suap/classes/Httpful/Bootstrap.php");
-\Httpful\Bootstrap::init();
+require_once("$CFG->dirroot/auth/suap/locallib.php");
 
 
 class auth_plugin_suap extends auth_oauth2\auth
@@ -45,7 +44,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         $this->authtype = 'suap';
         $this->roleauth = 'auth_suap';
         $this->errorlogtag = '[AUTH SUAP] ';
-        $this->config = get_config('auth/suap');
+        $this->config = get_auth_suap_config();
         $this->usuario = null;
     }
 
@@ -70,7 +69,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         if ($user->auth != 'suap') {
             return 0;
         }
-        $config = get_config('auth/suap');
+        $config = get_auth_suap_config();
         redirect($CFG->wwwroot . '/auth/suap/logout.php');
     }
 
@@ -105,30 +104,33 @@ class auth_plugin_suap extends auth_oauth2\auth
             die();
         }
 
-        $conf = get_config('auth/suap');
+        $code = required_param('code', PARAM_RAW);
 
-        $code = required_param('code', PARAM_ALPHANUMEXT);
-
+        $token_response = "";
         $user_data_response = "";
         try {
-            $auth = json_decode(
-                \Httpful\Request::post(
-                    $conf->token_url,
-                    [
-                        'grant_type' => 'authorization_code',
-                        'code' => $code,
-                        'redirect_uri' => "{$CFG->wwwroot}/auth/suap/authenticate.php",
-                        'client_id' => $conf->client_id,
-                        'client_secret' => $conf->client_secret
-                    ],
-                    \Httpful\Mime::FORM
-                )->send()->raw_body
+            // Exchange code for access token
+            $token_response = auth_suap_curl_post(
+                $this->config->token_url,
+                [
+                    'grant_type' => 'authorization_code',
+                    'code' => $code,
+                    'redirect_uri' => "{$CFG->wwwroot}/auth/suap/authenticate.php",
+                    'client_id' => $this->config->client_id,
+                    'client_secret' => $this->config->client_secret
+                ]
             );
+            $auth = json_decode($token_response);
 
-            // Tenta o SUAP Monolítico
-            $user_data_response = \Httpful\Request::get("$conf->rh_eu_url?scope=" . urlencode('identificacao documentos_pessoais'))
-                ->addHeaders(["Authorization" => "Bearer {$auth->access_token}", 'x-api-key' => $conf->client_secret, 'Accept' => 'application/json'])
-                ->send()->raw_body;
+            // Get user data from SUAP
+            $user_data_response = auth_suap_curl_get(
+                "{$this->config->rh_eu_url}?scope=" . urlencode('identificacao documentos_pessoais'),
+                [
+                    "Authorization: Bearer {$auth->access_token}",
+                    "x-api-key: {$this->config->client_secret}",
+                    "Accept: application/json"
+                ]
+            );
             if (strpos($user_data_response, '"identificacao"') === false) {
                 throw new Exception("Erro ao tentar obter dados do SUAP.");
             }
@@ -136,38 +138,17 @@ class auth_plugin_suap extends auth_oauth2\auth
             $userdata = json_decode($user_data_response);
             $this->create_or_update_user($userdata);
         } catch (Exception $e) {
-            include("$CFG->dirroot/auth/suap/suap_error.php");
+            // Log error for administrators
+            error_log('[AUTH SUAP] OAuth2 Authentication Error: ' . $e->getMessage());
+            
+            // Display user-friendly error message
+            print_error('auth_failure', 'auth_suap', '', null, $e->getMessage());
             die();
         }
     }
 
     function create_or_update_user($userdata)
     {
-        /*
-            {
-                "identificacao": "123456789",
-                "nome_social": "",
-                "nome_usual": "Nome Outros",
-                "nome_registro": "Nome Outros Nomes Sobrenome",
-                "nome": "Nome Sobrenome",
-                "primeiro_nome": "Nome",
-                "ultimo_nome": "Sobrenome",
-                "email": "nome.sobrenome@ifrn.edu.br",
-                "email_secundario": "nome.sobrenome@gmail.com",
-                "email_google_classroom": "nome.sobrenome@escolar.ifrn.edu.br",
-                "email_academico": "nome.sobrenome@academico.ifrn.edu.br",
-                "campus": "RE",
-                "foto":"https://cdn.suap.ifrn.edu.br/media/fotos/75x100/159574.4t54kAqLqyPB.jpg?X-Amz-Algorithm=...&X-Amz-Credential=...&X-Amz-Date=...&X-Amz-Expires=...&X-Amz-SignedHeaders=...&X-Amz-Signature=...",
-                "tipo_usuario": "Servidor (Técnico-Administrativo)",
-                "email_preferencial": "nome.sobrenome@ifrn.edu.br",
-                "cpf":"645.834.571-20",
-                "data_de_nascimento":"1978-10-30",
-                "sexo":"M",
-                "passaporte":"FU507718"
-            }
-
-            // Antes a foto era relativa ao baseurl do SUAP, agora é absoluta e temporária
-        */
         global $DB, $SESSION, $CFG;
 
         if (!property_exists($userdata, 'identificacao')) {
@@ -274,7 +255,7 @@ class auth_plugin_suap extends auth_oauth2\auth
         global $CFG, $DB;
         require_once($CFG->libdir . '/gdlib.php');
 
-        $conf = get_config('auth/suap');
+        $conf = get_auth_suap_config();
 
         $tmp_filename = $CFG->tempdir . '/suapfoto' . $usuario->id;
         file_put_contents($tmp_filename, file_get_contents($foto));

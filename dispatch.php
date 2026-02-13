@@ -26,8 +26,7 @@ define('NO_MOODLE_COOKIES', true);
 
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/../../lib/externallib.php');
-require_once("$CFG->dirroot/auth/suap/classes/Httpful/Bootstrap.php");
-\Httpful\Bootstrap::init();
+require_once(__DIR__ . '/locallib.php');
 
 // Permições de CORS para requisições PREFLIGHT (ionic)
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
@@ -65,7 +64,7 @@ function validate_enabled_web_services() {
 }
 
 function authenticate_service_caller() {
-    $config = get_config('auth/suap');
+    $config = get_auth_suap_config();
     $headers = getallheaders();
 
     // Verifica se o token de autenticação está no header
@@ -77,13 +76,12 @@ function authenticate_service_caller() {
     // Recorta o token do header "Token ..."
     $token = substr($headers[$authentication_key], 6);
 
-    $response = json_decode(
-        \Httpful\Request::post(
-            $config->verify_token_url,
-            json_encode(["token" => $token]),
-            \Httpful\Mime::JSON
-        )->send()->raw_body
+    $verify_response = auth_suap_curl_post(
+        $config->verify_token_url,
+        json_encode(["token" => $token]),
+        'application/json'
     );
+    $response = json_decode($verify_response);
 
     return $response->username;
 }

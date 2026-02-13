@@ -4,17 +4,11 @@ Plugin de autenticacao via OAuth2 do SUAP. Faz o login no Moodle e sincroniza da
 
 ## Requisitos
 - Moodle 3.7+ (require 2019_05_20_00)
+- PHP 7.2+ com extensão cURL habilitada
 - Plugin `auth_oauth2` habilitado (core do Moodle)
 
 ## Dependencias opcionais
 - **local_suap** (opcional) - Se instalado, aplica preferencias customizadas de usuario conforme `default_user_preferences` no primeiro login
-
-## Dependencias incluidas (bundled)
-- **Httpful 0.3.0** (em `classes/Httpful/`)
-  - Biblioteca HTTP para requisicoes OAuth2 e API do SUAP
-  - Autor: Nate Good
-  - Licenca: MIT (compativel com GPL)
-  - Repository: https://github.com/nategood/httpful
 
 ## 1. Configuracao no SUAP
 - No SUAP, pesquise por auth e selecione **Aplicacoes OAUTH2**

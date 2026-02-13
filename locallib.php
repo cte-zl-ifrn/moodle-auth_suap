@@ -24,6 +24,108 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Make HTTP POST request using cURL
+ *
+ * @param string $url URL to post to
+ * @param array|string $data Data to send (array will be form-encoded, string sent as-is)
+ * @param string $contenttype Content-Type header (default: application/x-www-form-urlencoded)
+ * @param array $headers Additional headers
+ * @return string Response body
+ */
+function auth_suap_curl_post($url, $data, $contenttype = 'application/x-www-form-urlencoded', $headers = []) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    
+    // Force HTTP/1.1 instead of HTTP/2
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    
+    // Prepare data based on content type.
+    if ($contenttype === 'application/x-www-form-urlencoded' && is_array($data)) {
+        // Use PHP_QUERY_RFC3986 to encode with & instead of &amp;
+        $postdata = http_build_query($data, '', '&', PHP_QUERY_RFC3986);
+    } else if ($contenttype === 'application/json' && is_array($data)) {
+        $postdata = json_encode($data);
+    } else {
+        $postdata = $data;
+    }
+    
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+    
+    // Set headers with explicit Content-Type and Content-Length.
+    $httpheaders = $headers;
+    if ($contenttype === 'application/x-www-form-urlencoded') {
+        $httpheaders[] = 'Content-Type: application/x-www-form-urlencoded';
+        $httpheaders[] = 'Content-Length: ' . strlen($postdata);
+    } else {
+        $httpheaders[] = 'Content-Type: ' . $contenttype;
+    }
+    
+    if (!empty($httpheaders)) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $httpheaders);
+    }
+    
+    $response = curl_exec($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlerror = curl_errno($ch);
+    $curlerrormsg = curl_error($ch);
+    
+    curl_close($ch);
+    
+    if ($curlerror) {
+        throw new Exception('cURL error: ' . $curlerrormsg . ' (code: ' . $curlerror . ')');
+    }
+    
+    if ($httpcode >= 400) {
+        throw new Exception('HTTP error ' . $httpcode . ': ' . substr($response, 0, 500));
+    }
+    
+    return $response;
+}
+
+/**
+ * Make HTTP GET request using cURL
+ *
+ * @param string $url URL to get
+ * @param array $headers Additional headers
+ * @return string Response body
+ */
+function auth_suap_curl_get($url, $headers = []) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    
+    if (!empty($headers)) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    }
+    
+    $response = curl_exec($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlerror = curl_errno($ch);
+    $curlerrormsg = curl_error($ch);
+    
+    curl_close($ch);
+    
+    if ($curlerror) {
+        throw new Exception('cURL error: ' . $curlerrormsg . ' (code: ' . $curlerror . ')');
+    }
+    
+    if ($httpcode >= 400) {
+        throw new Exception('HTTP error ' . $httpcode . ': ' . substr($response, 0, 500));
+    }
+    
+    return $response;
+}
 
 function get_last_sort_order($tablename) {
     global $DB;
@@ -78,4 +180,9 @@ function save_user_custom_field($categoryid, $shortname, $name, $datatype = 'tex
         ['shortname' => $shortname],
         ['categoryid' => $categoryid, 'name' => $name, 'description' => $name, 'descriptionformat' => 2, 'datatype' => $datatype, 'visible' => $visible, 'param1' => $p1, 'param2' => $p2]
     );
+}
+
+
+function get_auth_suap_config() {
+    return get_config('auth_suap');
 }

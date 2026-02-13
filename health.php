@@ -21,7 +21,7 @@
  */
 
 include_once("../../version.php");
-$conf = get_config('auth/suap');
+$conf = get_auth_suap_config();
 
 $plugin = new stdClass();
 include_once("version.php");
