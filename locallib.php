@@ -89,6 +89,7 @@ function auth_suap_curl_post($url, $data, $contenttype = 'application/x-www-form
     return $response;
 }
 
+
 /**
  * Make HTTP GET request using cURL
  *
@@ -126,6 +127,7 @@ function auth_suap_curl_get($url, $headers = []) {
     
     return $response;
 }
+
 
 function auth_suap_get_last_sort_order($tablename) {
     global $DB;
