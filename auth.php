@@ -236,6 +236,19 @@ class auth_plugin_suap extends auth_oauth2\auth
             $usuario->profile_field_tipo_doc_certificado = $usuario->profile_field_cpf ? "CPF" : "Passaporte";
         }
 
+        if (property_exists($userdata, 'eh_estrangeiro')) {
+            $usuario->profile_field_eh_estrangeiro = $userdata->eh_estrangeiro;
+        }
+
+        if (property_exists($userdata, 'modalidade')) {
+            $usuario->profile_field_modalidade_id = property_exists($userdata->modalidade, 'id') ? $userdata->modalidade->id : null;
+            $usuario->profile_field_modalidade_descricao = property_exists($userdata->modalidade, 'descricao') ? $userdata->modalidade->descricao : null;
+            if (property_exists($userdata->modalidade, 'nivel_ensino')) {
+                $usuario->profile_field_modalidade_id = property_exists($userdata->modalidade->nivel_ensino, 'id') ? $userdata->modalidade->nivel_ensino->id : null;
+                $usuario->profile_field_modalidade_descricao = property_exists($userdata->modalidade->nivel_ensino, 'descricao') ? $userdata->modalidade->nivel_ensino->descricao : null;
+            }
+        }
+
         $this->usuario = $usuario;
         $next = $SESSION->next_after_next;
 

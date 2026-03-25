@@ -26,5 +26,10 @@ function auth_suap_bulk_user_custom_field()
     auth_suap_save_user_custom_field($cid, 'passaporte', 'Passaporte');
     auth_suap_save_user_custom_field($cid, 'id_doc_certificado', 'ID do documento para certificado');
     auth_suap_save_user_custom_field($cid, 'tipo_doc_certificado', 'Tipo de documento para certificado');
+    auth_suap_save_user_custom_field($cid, 'eh_estrangeiro', 'É estrangeiro');
+    auth_suap_save_user_custom_field($cid, 'modalidade_id', 'Id da modalidade');
+    auth_suap_save_user_custom_field($cid, 'modalidade_descricao', 'Descrição da modalidade');
+    auth_suap_save_user_custom_field($cid, 'nivel_ensino_id', 'Id do nível de ensino');
+    auth_suap_save_user_custom_field($cid, 'nivel_ensino_descricao', 'Descrição do nível de ensino');
     return true;
 }
