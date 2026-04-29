@@ -180,7 +180,7 @@ function auth_suap_save_user_custom_field($categoryid, $shortname, $name, $datat
     return auth_suap_get_or_create(
         'user_info_field',
         ['shortname' => $shortname],
-        ['categoryid' => $categoryid, 'name' => $name, 'description' => $name, 'descriptionformat' => 2, 'datatype' => $datatype, 'visible' => $visible, 'param1' => $p1, 'param2' => $p2]
+        ['categoryid' => $categoryid, 'name' => $name, 'description' => $name, 'descriptionformat' => 2, 'datatype' => $datatype, 'visible' => $visible, 'param1' => $p1, 'param2' => $p2, 'sortorder' => auth_suap_get_last_sort_order('user_info_field')]
     );
 }
 
