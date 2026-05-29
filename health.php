@@ -20,17 +20,26 @@
  * @package     auth_suap
  */
 
-include_once("../../version.php");
-$conf = get_auth_suap_config();
-
 $plugin = new stdClass();
+include_once("../../config.php");
+include_once("locallib.php");
 include_once("version.php");
-echo "<pre>";
-echo "release: $plugin->release<br>";
-echo "version: $plugin->version<br>";
-echo "client_id: $conf->client_id<br>";
-echo "authorize_url: $conf->authorize_url<br>";
-echo "token_url: $conf->token_url<br>";
-echo "rh_eu_url: $conf->rh_eu_url<br>";
-echo "logout_url: $conf->logout_url<br>";
-echo "</pre>";
+
+$conf = get_auth_suap_config();
+ob_clean();
+header('Content-Type: application/json; charset=utf-8');
+header('X-Moodle-Plugin-Version: ' . $plugin->version);
+header('X-Moodle-Plugin-Release: ' . $plugin->release);
+echo json_encode(
+    [
+        "component" => $plugin->component,
+        "release" => $plugin->release,
+        "version" => $plugin->version,
+        "client_id" => $conf->client_id == $_GET['client_id'],
+        "authorize_url" => $conf->authorize_url,
+        "token_url" => $conf->token_url,
+        "rh_eu_url" => $conf->rh_eu_url,
+        "logout_url" => $conf->logout_url,
+    ],
+    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+);
